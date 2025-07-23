@@ -8,15 +8,13 @@ import { auth } from "@clerk/nextjs/server";
 
 async function RightSidebar() {
   //   const { user } = useUser();
-  const { userId, orgId, orgRole } = await auth();
-  console.log({ userId, orgId });
+  const { userId } = await auth();
   if (!userId) return null;
 
   //   const similarMinds = await fetchUsers({
   // userId: user.id,
   // pageSize: 4,
   //   });
-
   const similarMinds = { users: [] };
   //   const suggestedCOmmunities = await fetchCommunities({ pageSize: 4 });
   const suggestedCOmmunities = { communities: [] };
@@ -31,7 +29,7 @@ async function RightSidebar() {
         <div className="mt-7 flex w-[350px] flex-col gap-9">
           {suggestedCOmmunities.communities.length > 0 ? (
             <>
-              {suggestedCOmmunities.communities.map((community) => (
+              {/* {suggestedCOmmunities.communities.map((community) => (
                 <UserCard
                   key={community.id}
                   id={community.id}
@@ -40,7 +38,7 @@ async function RightSidebar() {
                   imgUrl={community.image}
                   personType="Community"
                 />
-              ))}
+              ))} */}
             </>
           ) : (
             <p className="!text-base-regular text-light-3">

@@ -7,28 +7,20 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "../globals.css";
 import Topbar from "@/components/shared/TopBar";
 import LeftSidebar from "@/components/shared/LeftSidebar";
 import RightSidebar from "@/components/shared/RightSideBar";
 import Bottombar from "@/components/shared/Bottombar";
+import { dark } from "@clerk/themes";
 // components
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Threads",
   description: "meta threads communication app",
 };
+const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
@@ -36,14 +28,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`bg-black ${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ClerkProvider
-          publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
-        >
+    <ClerkProvider
+      appearance={{
+        baseTheme: dark,
+      }}
+    >
+      <html lang="en">
+        <body className={inter.className}>
           <Topbar />
+
           <main className="flex flex-row">
             <LeftSidebar />
             <section className="main-container">
@@ -52,9 +45,10 @@ export default function RootLayout({
             {/* @ts-ignore */}
             <RightSidebar />
           </main>
+
           <Bottombar />
-        </ClerkProvider>
-      </body>
-    </html>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
