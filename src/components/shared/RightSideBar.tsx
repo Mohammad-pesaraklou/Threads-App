@@ -1,21 +1,18 @@
-// import { useUser } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
-
-// import UserCard from "../cards/UserCard";
-
+// actions
+import { fetchUsers } from "@/lib/actions/user.actions";
 // import { fetchCommunities } from "@/lib/actions/community.actions";
-// import { fetchUsers } from "@/lib/actions/user.actions";
+// components
+import UserCard from "../cards/UserCard";
 
 async function RightSidebar() {
-  //   const { user } = useUser();
   const { userId } = await auth();
   if (!userId) return null;
 
-  //   const similarMinds = await fetchUsers({
-  // userId: user.id,
-  // pageSize: 4,
-  //   });
-  const similarMinds = { users: [] };
+  const similarMindsData = await fetchUsers({
+    userId,
+    pageSize: 4,
+  });
   //   const suggestedCOmmunities = await fetchCommunities({ pageSize: 4 });
   const suggestedCOmmunities = { communities: [] };
 
@@ -42,7 +39,7 @@ async function RightSidebar() {
             </>
           ) : (
             <p className="!text-base-regular text-light-3">
-              No communities yet
+              No communities found!
             </p>
           )}
         </div>
@@ -51,9 +48,9 @@ async function RightSidebar() {
       <div className="flex flex-1 flex-col justify-start">
         <h3 className="text-heading4-medium text-light-1">Similar Minds</h3>
         <div className="mt-7 flex w-[350px] flex-col gap-10">
-          {similarMinds.users.length > 0 ? (
+          {similarMindsData.users.length > 0 ? (
             <>
-              {/* {similarMinds.users.map((person) => (
+              {similarMindsData.users.map((person) => (
                 <UserCard
                   key={person.id}
                   id={person.id}
@@ -62,10 +59,10 @@ async function RightSidebar() {
                   imgUrl={person.image}
                   personType="User"
                 />
-              ))} */}
+              ))}
             </>
           ) : (
-            <p className="!text-base-regular text-light-3">No users yet</p>
+            <p className="!text-base-regular text-light-3">No users found!</p>
           )}
         </div>
       </div>

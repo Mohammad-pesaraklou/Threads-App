@@ -32,7 +32,9 @@ export default function RootLayout({
               <UserButton />
             </SignedIn>
           </header>
-          {children}
+          <main className="w-full h-[calc(100dvh-_64px)] flex justify-center items-center">
+            {children}
+          </main>
         </ClerkProvider>
       </body>
     </html>
