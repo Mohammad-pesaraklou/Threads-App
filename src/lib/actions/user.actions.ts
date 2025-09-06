@@ -15,6 +15,53 @@ interface updateUserPropTypes {
   image: string;
   path: string;
 }
+
+export interface ICommunity {
+  _id: string;
+  id: string;
+  username: string;
+  name: string;
+  image?: string;
+  bio?: string;
+  createdBy: string;
+  threads: string[];
+  members: string[];
+}
+
+interface IUser {
+  _id: string;
+  id: string;
+  username: string;
+  name: string;
+  bio?: string;
+  image?: string;
+  communities: ICommunity[];
+  onboarded: boolean;
+}
+
+export async function fetchUser(userId: string): Promise<IUser | null> {
+  try {
+    await connectToDB();
+
+    const user = (await User.findOne({ id: userId })
+      .populate({ path: "communities", model: Community })
+      .lean()) as any;
+
+    if (!user) return null;
+
+    return {
+      ...user,
+      _id: user._id.toString(),
+      communities: (user.communities || []).map((c: any) => ({
+        ...c,
+        _id: c._id.toString(),
+      })),
+    };
+  } catch (error: any) {
+    throw new Error(`Failed to fetch user: ${error.message}`);
+  }
+}
+
 export async function updateUser({
   userId,
   bio,

@@ -1,11 +1,24 @@
-import React from "react";
+import { redirect } from "next/navigation";
 
-function CreateThreadPage() {
+import { fetchUser } from "@/lib/actions/user.actions";
+import { auth } from "@clerk/nextjs/server";
+import PostThread from "@/components/forms/PostThread";
+
+async function Page() {
+  const { userId } = await auth();
+  if (!userId) return null;
+
+  // fetch organization list created by user
+  const userInfo = await fetchUser(userId);
+
+  if (!userInfo?.onboarded) redirect("/onboarding");
   return (
-    <div>
-      <h1>hi</h1>
-    </div>
+    <>
+      <h1 className="head-text">Create Thread</h1>
+
+      <PostThread userId={userInfo._id} />
+    </>
   );
 }
 
-export default CreateThreadPage;
+export default Page;
