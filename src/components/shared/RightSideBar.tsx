@@ -55,7 +55,7 @@ async function RightSidebar() {
                   key={person.id}
                   id={person.id}
                   name={person.name}
-                  username={person.username}
+                  username={person.userName}
                   imgUrl={person.image}
                   personType="User"
                 />

@@ -23,8 +23,8 @@ const UserModelSchema = new Schema(
         ref: "Community",
       },
     ],
-  },
-  { _id: false }
+  }
+  // { _id: false }
 );
 const User = mongoose.models.User || mongoose.model("User", UserModelSchema);
 

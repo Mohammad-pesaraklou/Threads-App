@@ -23,8 +23,6 @@ async function Home({
     30
   );
 
-  console.log({ searchParams: searchParams.page });
-
   return (
     <>
       <h1 className="head-text text-left">Home</h1>

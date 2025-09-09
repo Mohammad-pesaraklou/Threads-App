@@ -16,10 +16,11 @@ async function SearchPage({
 
   const userInfo = await fetchUserPosts(userId);
   if (!userInfo?.onboarded) redirect("/onboarding");
+  const params = await searchParams.q;
 
   const result = await fetchUsers({
     userId: userId,
-    searchString: searchParams.q,
+    searchString: params,
     pageNumber: searchParams?.page ? +searchParams.page : 1,
     pageSize: 25,
   });

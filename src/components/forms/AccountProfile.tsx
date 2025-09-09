@@ -31,12 +31,11 @@ interface Props {
     objectId: string;
     username: string;
     name: string;
-    bio: string;
-    image: string;
+    bio: string | undefined;
+    image: string | undefined;
   };
   btnTitle: string;
 }
-
 const AccountProfile = ({ user, btnTitle }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -53,8 +52,8 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
       bio: user?.bio ? user.bio : "",
     },
   });
-  console.log({ user });
   const onSubmit = async (values: z.infer<typeof UserValidation>) => {
+    console.log({ user, form: form.getValues() });
     const blob = values.profile_photo;
 
     const hasImageChanged = isBase64Image(blob);

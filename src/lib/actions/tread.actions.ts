@@ -56,42 +56,65 @@ interface Params {
 
 export async function createThread({
   text,
-  author,
+  author, // custom id از Clerk مثل "user_..."
   communityId,
   path,
 }: Params) {
   try {
-    console.log("createThread called");
-    connectToDB();
-    const communityIdObject = await Community.findOne(
-      { id: communityId },
-      { _id: 1 }
-    );
+    console.log("createThread called with author (custom id):", author);
+    await connectToDB();
 
+    // پیدا کردن کاربر بر اساس custom id
+    const user = await User.findOne({ id: author }).select("_id");
+    console.log("Found user:", user ? "Yes" : "No");
+    if (!user) {
+      throw new Error(
+        `User with custom id ${author} not found in DB. Check Clerk webhook sync.`
+      );
+    }
+    console.log("User _id (ObjectId):", user._id);
+
+    // پیدا کردن community اگر وجود داره
+    const communityIdObject = communityId
+      ? await Community.findOne({ id: communityId }, { _id: 1 })
+      : null;
+    console.log("Community found:", !!communityIdObject);
+
+    // ایجاد Thread با author به عنوان _id کاربر (ObjectId)
     const createdThread = await Thread.create({
       text,
-      author,
-      community: communityIdObject, // Assign communityId if provided, or leave it null for personal account
+      author: user._id, // ObjectId برای ref
+      community: communityIdObject ? communityIdObject._id : null,
     });
+    console.log("Created thread _id:", createdThread._id);
 
-    // Update User model
-    await User.findByIdAndUpdate(author, {
-      $push: { threads: createdThread._id },
-    });
+    // آپدیت User: push thread به threads array (با custom id)
+    const updatedUser = await User.findOneAndUpdate(
+      { id: author },
+      { $push: { threads: createdThread._id } },
+      { new: true }
+    );
+    console.log(
+      "User updated, new threads count:",
+      updatedUser?.threads.length || 0
+    );
 
+    // آپدیت Community اگر وجود داره
     if (communityIdObject) {
-      // Update Community model
-      await Community.findByIdAndUpdate(communityIdObject, {
-        $push: { threads: createdThread._id },
-      });
+      await Community.findByIdAndUpdate(
+        communityIdObject._id,
+        { $push: { threads: createdThread._id } },
+        { new: true }
+      );
+      console.log("Community updated");
     }
 
     revalidatePath(path);
   } catch (error: any) {
+    console.error("Full error in createThread:", error);
     throw new Error(`Failed to create thread: ${error.message}`);
   }
 }
-
 async function fetchAllChildThreads(threadId: string): Promise<any[]> {
   const childThreads = await Thread.find({ parentId: threadId });
 

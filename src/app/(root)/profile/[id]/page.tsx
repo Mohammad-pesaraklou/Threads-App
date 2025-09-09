@@ -5,26 +5,27 @@ import { profileTabs } from "@/constants";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { fetchUser } from "@/lib/actions/user.actions";
 import { auth } from "@clerk/nextjs/server";
 import ProfileHeader from "@/components/shared/ProfileHeader";
 import ThreadsTab from "@/components/shared/ThreadsTab";
+import { fetchUser } from "@/lib/actions/user.actions";
 
 async function Page({ params }: { params: { id: string } }) {
   const { userId } = await auth();
   if (!userId) return null;
 
   const userInfo = await fetchUser(params.id);
-  console.log({ userInfo }, "userfinefri");
+  if (!userInfo) return null;
+  console.log({ userInfo }, "userInfo in profile [id]");
   return (
     <section>
       <ProfileHeader
         accountId={userInfo.id}
         authUserId={userId}
         name={userInfo.name}
-        username={userInfo.username}
-        imgUrl={userInfo.image}
-        bio={userInfo.bio}
+        username={userInfo.userName}
+        imgUrl={userInfo.image ?? null}
+        bio={userInfo.bio ?? null}
       />
 
       <div className="mt-9">
@@ -41,7 +42,7 @@ async function Page({ params }: { params: { id: string } }) {
                 />
                 <p className="max-sm:hidden">{tab.label}</p>
 
-                {tab.label === "Threads" && (
+                {tab.label === "Threads" && userInfo?.threads && (
                   <p className="ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2">
                     {userInfo.threads.length}
                   </p>

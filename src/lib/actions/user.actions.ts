@@ -28,15 +28,16 @@ export interface ICommunity {
   members: string[];
 }
 
-interface IUser {
+export interface IUser {
   _id: string;
   id: string;
-  username: string;
+  userName: string;
   name: string;
   bio?: string;
   image?: string;
   communities: ICommunity[];
   onboarded: boolean;
+  threads?: string[];
 }
 
 export async function fetchUser(userId: string): Promise<IUser | null> {
@@ -70,18 +71,22 @@ export async function updateUser({
   username,
   image,
 }: updateUserPropTypes): Promise<void> {
+  console.log({ userId, bio, name, path, username, image });
+  if (!username || username.trim() === "") {
+    throw new Error("Username is required and cannot be empty");
+  }
   try {
     await connectToDB();
     await User.findOneAndUpdate(
       { id: userId },
       {
-        username: username.toLowerCase(),
-        name,
-        bio,
-        image,
+        userName: username.toLowerCase().trim(),
+        name: name?.trim() || "",
+        bio: bio || "",
+        image: image || "",
         onboarded: true,
       },
-      { upsert: true }
+      { upsert: true, new: true, runValidators: true }
     );
 
     if (path === "/profile/edit") {
