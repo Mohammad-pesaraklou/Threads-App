@@ -18,10 +18,10 @@ async function Page({
 
   const userInfo = await fetchUser(userId);
   if (!userInfo?.onboarded) redirect("/onboarding");
-
+  const param = await searchParams;
   const result = await fetchCommunities({
-    searchString: searchParams.q,
-    pageNumber: searchParams?.page ? +searchParams.page : 1,
+    searchString: param.q,
+    pageNumber: param?.page ? +param.page : 1,
     pageSize: 25,
   });
 

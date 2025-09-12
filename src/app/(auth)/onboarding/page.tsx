@@ -5,7 +5,6 @@ import { useAuth } from "@clerk/nextjs";
 
 function OnBoardingPage() {
   const { userId } = useAuth();
-  console.log({ userId });
   if (!userId) return null;
   const userData = {
     id: userId,

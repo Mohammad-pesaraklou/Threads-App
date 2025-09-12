@@ -14,14 +14,11 @@ async function Home({
 }) {
   const { userId } = await auth();
   if (!userId) return null;
-
+  const params = await searchParams;
   const userInfo = await fetchUser(userId);
   if (!userInfo?.onboarded) redirect("/onboarding");
 
-  const result = await fetchPosts(
-    searchParams.page ? +searchParams.page : 1,
-    30
-  );
+  const result = await fetchPosts(params.page ? +params.page : 1, 30);
 
   return (
     <>
@@ -51,7 +48,7 @@ async function Home({
 
       <Pagination
         path="/"
-        pageNumber={searchParams?.page ? +searchParams.page : 1}
+        pageNumber={params?.page ? +params.page : 1}
         isNext={result.isNext}
       />
     </>

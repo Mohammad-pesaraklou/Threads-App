@@ -36,6 +36,7 @@ function PostThread({ userId }: Props) {
       accountId: userId,
     },
   });
+  console.log("createThread:", createThread);
 
   const onSubmit = async (values: z.infer<typeof ThreadValidation>) => {
     console.log({ userId });

@@ -56,7 +56,7 @@ interface Params {
 
 export async function createThread({
   text,
-  author, // custom id از Clerk مثل "user_..."
+  author, // custom id from Clerk: "user_..."
   communityId,
   path,
 }: Params) {
@@ -64,31 +64,25 @@ export async function createThread({
     console.log("createThread called with author (custom id):", author);
     await connectToDB();
 
-    // پیدا کردن کاربر بر اساس custom id
     const user = await User.findOne({ id: author }).select("_id");
-    console.log("Found user:", user ? "Yes" : "No");
     if (!user) {
       throw new Error(
         `User with custom id ${author} not found in DB. Check Clerk webhook sync.`
       );
     }
-    console.log("User _id (ObjectId):", user._id);
 
-    // پیدا کردن community اگر وجود داره
     const communityIdObject = communityId
       ? await Community.findOne({ id: communityId }, { _id: 1 })
       : null;
     console.log("Community found:", !!communityIdObject);
 
-    // ایجاد Thread با author به عنوان _id کاربر (ObjectId)
     const createdThread = await Thread.create({
       text,
-      author: user._id, // ObjectId برای ref
+      author: user._id,
       community: communityIdObject ? communityIdObject._id : null,
     });
     console.log("Created thread _id:", createdThread._id);
 
-    // آپدیت User: push thread به threads array (با custom id)
     const updatedUser = await User.findOneAndUpdate(
       { id: author },
       { $push: { threads: createdThread._id } },
@@ -99,7 +93,6 @@ export async function createThread({
       updatedUser?.threads.length || 0
     );
 
-    // آپدیت Community اگر وجود داره
     if (communityIdObject) {
       await Community.findByIdAndUpdate(
         communityIdObject._id,

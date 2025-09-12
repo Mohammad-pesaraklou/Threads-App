@@ -32,7 +32,7 @@ function Topbar() {
             <UserButton />
           </SignedIn>
         </div>
-        {/* 
+
         <OrganizationSwitcher
           appearance={{
             baseTheme: dark,
@@ -40,7 +40,7 @@ function Topbar() {
               organizationSwitcherTrigger: "py-2 px-4",
             },
           }}
-        /> */}
+        />
       </div>
     </nav>
   );

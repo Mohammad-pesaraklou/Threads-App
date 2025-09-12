@@ -13,10 +13,9 @@ import { fetchUser } from "@/lib/actions/user.actions";
 async function Page({ params }: { params: { id: string } }) {
   const { userId } = await auth();
   if (!userId) return null;
-
-  const userInfo = await fetchUser(params.id);
+  const resolvedParam = await params;
+  const userInfo = await fetchUser(resolvedParam.id);
   if (!userInfo) return null;
-  console.log({ userInfo }, "userInfo in profile [id]");
   return (
     <section>
       <ProfileHeader
