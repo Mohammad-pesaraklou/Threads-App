@@ -6,6 +6,7 @@ import Pagination from "@/components/shared/Pagination";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { auth } from "@clerk/nextjs/server";
 import { fetchPosts } from "@/lib/actions/tread.actions";
+import { useEffect } from "react";
 
 async function Home({
   searchParams,

@@ -6,6 +6,8 @@ const isPublicRoute = createRouteMatcher([
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/onboarding(.*)",
+  "/api/webhook/clerk",
+
   // "/",
 ]);
 
@@ -15,6 +17,9 @@ export default clerkMiddleware(async (auth, req) => {
   }
 });
 
+// export const config = {
+//   matcher: ["/((?!_next|.*\\..*).*)", "/(api|trpc)(.*)"],
+// };
 export const config = {
-  matcher: ["/((?!_next|.*\\..*).*)", "/(api|trpc)(.*)"],
+  matcher: ["/((?!_next|.*\\..*|api/webhook/clerk).*)", "/(api|trpc)(.*)"],
 };
